@@ -8,8 +8,13 @@ import json
 from store.models import Product
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
+import razorpay
+from greatkart.settings import RAZORPAY_API_KEY_ID, RAZORPAY_API_KEY_SECRET
 
 # Create your views here.
+
+client = razorpay.Client(auth=(RAZORPAY_API_KEY_ID, RAZORPAY_API_KEY_SECRET))
+
 
 def payments(request):
     body = json.loads(request.body)
@@ -119,15 +124,24 @@ def place_order(request, total=0, quantity=0):
             current_date = d.strftime("%Y%m%d") #20220423
             order_number = current_date + str(data.id)
             data.order_number = order_number
+            DATA = {
+                "amount": grand_total*100,
+                "currency": "INR",
+                "payment_capture": 1,
+            }
+            payment_order = client.order.create(data=DATA)
             data.save()
 
             order = Order.objects.get(user=current_user, is_ordered=False, order_number=order_number)
+            payment_order_id = payment_order['id']
             context = {
                 'order': order,
                 'cart_items': cart_items,
                 'total': total,
                 'tax': tax,
                 'grand_total': grand_total,
+                'api_key_id': RAZORPAY_API_KEY_ID,
+                'order_id': payment_order_id,
             }
             return render(request, 'orders/payments.html', context)
         else:

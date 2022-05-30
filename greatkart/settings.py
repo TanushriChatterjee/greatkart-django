@@ -151,3 +151,8 @@ EMAIL_PORT = config('EMAIL_PORT', cast=int)
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool)
+
+
+# Razorpay
+RAZORPAY_API_KEY_ID = 'rzp_test_P1a58kZ5BlYGfe'
+RAZORPAY_API_KEY_SECRET = 'wDcGlLcnOioZn2MlFu3CrzHD'
